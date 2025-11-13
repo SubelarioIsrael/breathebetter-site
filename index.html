@@ -17,7 +17,7 @@
             <nav class="flex items-center justify-between">
                 <!-- Logo -->
                 <div class="logo flex items-center space-x-2">
-                    <img src="bblogotrans.png" alt="BreatheBetter Logo" class="w-10 h-auto max-h-10 object-contain">
+                    <img src="bblogotrans.png" alt="BreatheBetter Logo" class="h-8 w-auto object-contain max-w-[2rem]">
                     <span class="logo-text text-lg font-semibold text-gray-800">BreatheBetter</span>
                 </div>
 
@@ -295,26 +295,69 @@
     </footer>
 
     <script>
-    // Force-download APKs by fetching them as blobs and triggering a download
+    // Enhanced download with multiple path fallbacks and clearer 404 diagnostics.
     (function () {
-      async function downloadFile(url, suggestedName) {
+      function attemptedMsg(attempts) {
+        return 'Tried the following URLs:\n' + attempts.map((a, i) => (i+1)+'. '+a).join('\n') + '\n\nCheck that the APK files exist at one of these paths and that filenames match exactly (case-sensitive).';
+      }
+
+      async function fetchHead(url) {
         try {
-          const res = await fetch(url);
-          if (!res.ok) throw new Error('Network response was not ok');
-          const blob = await res.blob();
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = suggestedName || '';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(blobUrl);
+          const r = await fetch(url, { method: 'HEAD' });
+          return r;
         } catch (err) {
-          console.error('Download failed, falling back to navigation:', err);
-          // fallback: navigate to the file URL (server may handle Content-Disposition)
-          window.location.href = url;
+          return null;
         }
+      }
+
+      async function downloadBlobFromResponse(res, suggestedName) {
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = suggestedName || '';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(blobUrl);
+      }
+
+      async function downloadFile(originalUrl, suggestedName) {
+        const origin = window.location.origin;
+        const pathname = window.location.pathname;
+        const dir = pathname.endsWith('/') ? pathname : pathname.replace(/\/[^/]*$/, '/');
+        const firstSegment = (pathname.split('/').filter(Boolean)[0] || '');
+
+        const candidates = [
+          originalUrl,                                      // relative as written
+          origin + (originalUrl.startsWith('/') ? originalUrl : '/' + originalUrl), // root absolute
+          origin + dir + originalUrl.replace(/^\.\//, ''),  // relative to current directory
+        ];
+        if (firstSegment) {
+          candidates.push(origin + '/' + firstSegment + '/' + originalUrl.replace(/^\//, '')); // inferred repo base
+        }
+
+        const tried = [];
+        for (const c of candidates) {
+          tried.push(c);
+          // try HEAD first to avoid downloading large file unnecessarily
+          const head = await fetchHead(c);
+          if (head && head.ok) {
+            // server says file exists; perform GET to download
+            try {
+              const res = await fetch(c);
+              if (res.ok) {
+                await downloadBlobFromResponse(res, suggestedName);
+                return;
+              }
+            } catch (err) {
+              console.error('GET failed for', c, err);
+            }
+          }
+        }
+
+        // none succeeded
+        alert('File not found.\n\n' + attemptedMsg(tried));
       }
 
       document.addEventListener('DOMContentLoaded', function () {
@@ -322,7 +365,6 @@
           btn.addEventListener('click', function (e) {
             const url = btn.getAttribute('href');
             const name = btn.dataset.filename || btn.getAttribute('download') || '';
-            // If no URL, do default behavior
             if (!url) return;
             e.preventDefault();
             downloadFile(url, name);

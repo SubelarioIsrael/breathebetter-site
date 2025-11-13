@@ -59,14 +59,12 @@ html {
     padding: 20px 0;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    font-size: 20px;
-    color: var(--text-primary);
-    text-decoration: none;
+.logo img {
+  height: 2rem;       /* ~32px tall */
+  width: auto;
+  max-width: 2.5rem;  /* optional: caps size if image has wide proportions */
+  object-fit: contain;
+  display: block;
 }
 
 .logo-text {
