@@ -11,18 +11,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <nav class="nav">
+        <!-- Header -->
+    <header class="header bg-white shadow-sm fixed top-0 left-0 w-full z-50">
+        <div class="container mx-auto px-6 py-3">
+            <nav class="flex items-center justify-between">
+                <!-- Logo -->
                 <div class="logo flex items-center space-x-2">
-                    <img src="bblogotrans.png" alt="BreatheBetter Logo" class="w-8 h-8">
+                    <img src="bblogotrans.png" alt="BreatheBetter Logo" class="w-10 h-auto max-h-10 object-contain">
                     <span class="logo-text text-lg font-semibold text-gray-800">BreatheBetter</span>
                 </div>
-                <div class="nav-links">
-                    <a href="#features">Features</a>
-                    <a href="#download">Download</a>
-                    <a href="#about">About</a>
+
+                <!-- Nav Links -->
+                <div class="nav-links flex space-x-6 text-gray-700 font-medium">
+                    <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+                    <a href="#download" class="hover:text-indigo-600 transition">Download</a>
+                    <a href="#about" class="hover:text-indigo-600 transition">About</a>
                 </div>
             </nav>
         </div>
