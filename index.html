@@ -15,13 +15,9 @@
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <div class="logo">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="16" cy="16" r="14" fill="#4F46E5" opacity="0.2"/>
-                        <path d="M16 8C16 8 12 12 12 16C12 20 14.6863 22 16 22C17.3137 22 20 20 20 16C20 12 16 8 16 8Z" fill="#4F46E5"/>
-                        <circle cx="16" cy="16" r="3" fill="white"/>
-                    </svg>
-                    <span class="logo-text">BreatheBetter</span>
+                <div class="logo flex items-center space-x-2">
+                    <img src="{{ asset('images/bblogotrans.png') }}" alt="BreatheBetter Logo" class="w-8 h-8">
+                    <span class="logo-text text-lg font-semibold text-gray-800">BreatheBetter</span>
                 </div>
                 <div class="nav-links">
                     <a href="#features">Features</a>
@@ -160,10 +156,11 @@
                     <p class="section-description">Available on all your favorite platforms. Start your wellness journey now.</p>
                 </div>
                 <div class="download-buttons">
-                    <a href="apks/breathebetter-arm64-v8a.apk" class="download-btn" download="breathebetter-arm64-v8a.apk">
+                    <a href="apks/breathebetter-arm64-v8a.apk" class="download-btn" download="breathebetter-arm64-v8a.apk" data-filename="breathebetter-arm64-v8a.apk">
                         <div class="download-icon">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 9L20 20M20 20L31 9M20 20L9 31M20 20L31 31" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 18a4 4 0 01-.88-7.9A5 5 0 0118 9a4.5 4.5 0 01-.5 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 13v6m0 0l-3-3m3 3l3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <div class="download-text">
@@ -172,10 +169,11 @@
                         </div>
                     </a>
 
-                    <a href="apks/breathebetter-armeabi-v7a.apk" class="download-btn" download="breathebetter-armeabi-v7a.apk">
+                    <a href="apks/breathebetter-armeabi-v7a.apk" class="download-btn" download="breathebetter-armeabi-v7a.apk" data-filename="breathebetter-armeabi-v7a.apk">
                         <div class="download-icon">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 9L20 20M20 20L31 9M20 20L9 31M20 20L31 31" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 18a4 4 0 01-.88-7.9A5 5 0 0118 9a4.5 4.5 0 01-.5 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 13v6m0 0l-3-3m3 3l3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <div class="download-text">
@@ -184,11 +182,12 @@
                         </div>
                     </a>
 
-                    <a href="apks/breathebetter-x86_64.apk" class="download-btn" download="breathebetter-x86_64.apk">
+                    <a href="apks/breathebetter-x86_64.apk" class="download-btn" download="breathebetter-x86_64.apk" data-filename="breathebetter-x86_64.apk">
                         <div class="download-icon">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 9L20 20M20 20L31 9M20 20L9 31M20 20L31 31" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 18a4 4 0 01-.88-7.9A5 5 0 0118 9a4.5 4.5 0 01-.5 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 13v6m0 0l-3-3m3 3l3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>      
                         </div>
                         <div class="download-text">
                             <div class="download-label">Download APK</div>
@@ -324,6 +323,42 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+    // Force-download APKs by fetching them as blobs and triggering a download
+    (function () {
+      async function downloadFile(url, suggestedName) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('Network response was not ok');
+          const blob = await res.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = suggestedName || '';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(blobUrl);
+        } catch (err) {
+          console.error('Download failed, falling back to navigation:', err);
+          // fallback: navigate to the file URL (server may handle Content-Disposition)
+          window.location.href = url;
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.download-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            const url = btn.getAttribute('href');
+            const name = btn.dataset.filename || btn.getAttribute('download') || '';
+            // If no URL, do default behavior
+            if (!url) return;
+            e.preventDefault();
+            downloadFile(url, name);
+          });
+        });
+      });
+    })();
+    </script>
 </body>
 </html>
